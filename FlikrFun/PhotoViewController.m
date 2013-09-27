@@ -2,15 +2,15 @@
 //  PhotoViewController.m
 //  FlikrFun
 //
-//  Created by Shane Fu on 9/26/13.
+//  Created by Shane Fu on 9/27/13.
 //  Copyright (c) 2013 Shane Fu. All rights reserved.
 //
 
 #import "PhotoViewController.h"
 
-@interface PhotoViewController () <UIScrollViewDelegate>
-@property (weak, nonatomic) IBOutlet UIScrollView *photoScrollView;
-@property (weak, nonatomic) IBOutlet UIImageView *photoImageView;
+@interface PhotoViewController ()<UIScrollViewDelegate>
+@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (nonatomic, strong) UIImageView *imageView;
 
 @end
 
@@ -28,19 +28,30 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
-//	self.photoImageView.contentMode = UIViewContentModeTopLeft;
-	self.photoImageView.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:self.photoURL]];
-	NSLog(@"self.photoURL = %@", self.photoURL);
-	self.photoScrollView.delegate = self;
+	
+	UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:self.photoURL]];
+	self.imageView = [[UIImageView alloc] initWithImage:image];
+	self.imageView.frame = CGRectMake(0,0,image.size.width, image.size.height);
+	[self.scrollView addSubview:self.imageView];
+	
+	self.scrollView.contentSize = image.size;
 }
 
 -(void)viewDidAppear:(BOOL)animated
 {
-	//using autoLayout so set here
-//	self.photoScrollView.contentSize = CGSizeMake(self.photoImageView.image.size.width,  self.photoImageView.image.size.width);
-	NSLog(@"image bounds width = %f, height = %f", self.photoImageView.bounds.size.width, self.photoImageView.bounds.size.height);
-	NSLog(@"image size   width = %f, height = %f", self.photoImageView.image.size.width, self.photoImageView.image.size.height);
+	[super viewDidAppear:animated];
+	
+	CGRect scrollViewFrame = self.scrollView.frame;
+	NSLog(@"scrollViewFrame = %f, %f", scrollViewFrame.size.width, scrollViewFrame.size.height);
+	CGFloat scaleWidth = scrollViewFrame.size.width / self.scrollView.contentSize.width;
+	NSLog(@"self.scrollView.contentSize. = %f, %f", self.scrollView.contentSize.width, self.scrollView.contentSize.height);
+	CGFloat scaleHeight = scrollViewFrame.size.height/ self.scrollView.contentSize.height;
+	CGFloat minScale = MIN(scaleWidth, scaleHeight);
+	NSLog(@"scaleWidth = %f,scaleHeight =  %f", scaleWidth, scaleHeight);
+	
+	self.scrollView.minimumZoomScale = minScale;
+	self.scrollView.maximumZoomScale = 1.0f;
+	self.scrollView.zoomScale = minScale;
 }
 
 - (void)didReceiveMemoryWarning
@@ -49,15 +60,8 @@
     // Dispose of any resources that can be recreated.
 }
 
--(void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation{
-//	self.photoImageView.frame = CGRectMake(0, 0, self.photoImageView.image.size.width, self.photoImageView.image.size.height);
-//	self.photoScrollView.contentSize = self.photoImageView.image.size;
-//	self.photoScrollView.scrollEnabled = YES;
-}
-
-#pragma mark - UIScrollViewDelegate
 -(UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView{
-	return self.photoImageView;
+	return self.imageView;
 }
 
 @end
