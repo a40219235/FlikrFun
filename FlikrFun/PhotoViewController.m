@@ -52,6 +52,8 @@
 	self.scrollView.minimumZoomScale = minScale;
 	self.scrollView.maximumZoomScale = 1.0f;
 	self.scrollView.zoomScale = minScale;
+	
+	[self centerScrollViewContents];
 }
 
 - (void)didReceiveMemoryWarning
@@ -60,8 +62,48 @@
     // Dispose of any resources that can be recreated.
 }
 
+-(void)LoggingCGSize:(CGSize)size withString:(NSString *)string{
+	NSLog(@"%@.width = %f, %@.height = %f", string, size.width, string, size.height);
+}
+
+-(void)LoggingCGRect:(CGRect)rect withString:(NSString *)string{
+	NSLog(@"%@ = (%f, %f, %f, %f)", string, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+}
+
+-(void)centerScrollViewContents{
+	CGSize boundSize = self.scrollView.bounds.size;
+	CGRect contentsFrame = self.imageView.frame;
+	
+	[self LoggingCGSize:boundSize withString:@"boundSize"];
+	[self LoggingCGRect:contentsFrame withString:@"contentFrame"];
+	
+	if (contentsFrame.size.width < boundSize.width) {
+		contentsFrame.origin.x = (boundSize.width - contentsFrame.size.width)/2.0f;
+	}else{
+		contentsFrame.origin.x = 0.0f;
+	}
+	
+	if (contentsFrame.size.height < boundSize.height) {
+		contentsFrame.origin.y = (boundSize.height - contentsFrame.size.height)/2.0f;
+	}else{
+		contentsFrame.origin.y = 0.0f;
+	}
+	
+	self.imageView.frame = contentsFrame;
+}
+
+-(void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation{
+	[self centerScrollViewContents];
+}
+
+
+#pragma mark- UIScrollViewDelegate
 -(UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView{
 	return self.imageView;
+}
+
+-(void)scrollViewDidZoom:(UIScrollView *)scrollView{
+	[self centerScrollViewContents];
 }
 
 @end
