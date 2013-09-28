@@ -29,22 +29,20 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	
-	self.spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-	[self.spinner startAnimating];
-	[self.view addSubview:self.spinner];
-	
-	[self downloadImageWithCompletionHandler:^{
-		[self.spinner removeFromSuperview];
-		self.spinner = NULL;
-	}];
 }
 
 -(void)viewDidAppear:(BOOL)animated
 {
 	[super viewDidAppear:animated];
 	//set spinner position here cause scrollView is inited here
+	self.spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+	[self.spinner startAnimating];
 	self.spinner.center = self.scrollView.center;
+	[self.view addSubview:self.spinner];
+	[self downloadImageWithCompletionHandler:^{
+		[self.spinner removeFromSuperview];
+		self.spinner = NULL;
+	}];
 }
 
 - (void)didReceiveMemoryWarning

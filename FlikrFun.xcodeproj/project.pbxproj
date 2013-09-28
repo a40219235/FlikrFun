@@ -17,6 +17,9 @@
 		2A02DCB417F412E800298484 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2A02DCB317F412E800298484 /* Default@2x.png */; };
 		2A02DCB617F412E800298484 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2A02DCB517F412E800298484 /* Default-568h@2x.png */; };
 		2A02DCB917F412E800298484 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2A02DCB717F412E800298484 /* MainStoryboard.storyboard */; };
+		2A08D4C917F75F0A00ECB64A /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A08D4C817F75F0A00ECB64A /* MapKit.framework */; };
+		2A08D4CB17F75F1300ECB64A /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A08D4CA17F75F1300ECB64A /* CoreLocation.framework */; };
+		2A08D4CE17F75F5200ECB64A /* MapKitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A08D4CD17F75F5100ECB64A /* MapKitViewController.m */; };
 		2A2255A317F59425004BF792 /* PhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A2255A217F59425004BF792 /* PhotoViewController.m */; };
 		2A2F033617F4378A0059C154 /* PlacePhotoesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A2F033517F4378A0059C154 /* PlacePhotoesTableViewController.m */; };
 		2A623F2517F54EA200745F13 /* photo1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2A623F2417F54EA200745F13 /* photo1.png */; };
@@ -40,6 +43,10 @@
 		2A02DCB317F412E800298484 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		2A02DCB517F412E800298484 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		2A02DCB817F412E800298484 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
+		2A08D4C817F75F0A00ECB64A /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		2A08D4CA17F75F1300ECB64A /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		2A08D4CC17F75F5100ECB64A /* MapKitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapKitViewController.h; sourceTree = "<group>"; };
+		2A08D4CD17F75F5100ECB64A /* MapKitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapKitViewController.m; sourceTree = "<group>"; };
 		2A2255A117F59425004BF792 /* PhotoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoViewController.h; sourceTree = "<group>"; };
 		2A2255A217F59425004BF792 /* PhotoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoViewController.m; sourceTree = "<group>"; };
 		2A2F033417F4378A0059C154 /* PlacePhotoesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlacePhotoesTableViewController.h; sourceTree = "<group>"; };
@@ -59,6 +66,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2A08D4CB17F75F1300ECB64A /* CoreLocation.framework in Frameworks */,
+				2A08D4C917F75F0A00ECB64A /* MapKit.framework in Frameworks */,
 				2A02DCA017F412E800298484 /* UIKit.framework in Frameworks */,
 				2A02DCA217F412E800298484 /* Foundation.framework in Frameworks */,
 				2A02DCA417F412E800298484 /* CoreGraphics.framework in Frameworks */,
@@ -88,6 +97,8 @@
 		2A02DC9E17F412E800298484 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2A08D4CA17F75F1300ECB64A /* CoreLocation.framework */,
+				2A08D4C817F75F0A00ECB64A /* MapKit.framework */,
 				2A02DC9F17F412E800298484 /* UIKit.framework */,
 				2A02DCA117F412E800298484 /* Foundation.framework */,
 				2A02DCA317F412E800298484 /* CoreGraphics.framework */,
@@ -109,6 +120,8 @@
 				2A2255A217F59425004BF792 /* PhotoViewController.m */,
 				2A7EBC8917F4289D00EEAD4C /* RecentViewPhotoesTableViewController.h */,
 				2A7EBC8A17F4289E00EEAD4C /* RecentViewPhotoesTableViewController.m */,
+				2A08D4CC17F75F5100ECB64A /* MapKitViewController.h */,
+				2A08D4CD17F75F5100ECB64A /* MapKitViewController.m */,
 				2A7EBC7A17F418FA00EEAD4C /* FlickrFetcher */,
 				2A02DCA617F412E800298484 /* Supporting Files */,
 			);
@@ -215,6 +228,7 @@
 				2A7EBC8B17F4289E00EEAD4C /* RecentViewPhotoesTableViewController.m in Sources */,
 				2A2F033617F4378A0059C154 /* PlacePhotoesTableViewController.m in Sources */,
 				2A2255A317F59425004BF792 /* PhotoViewController.m in Sources */,
+				2A08D4CE17F75F5200ECB64A /* MapKitViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
