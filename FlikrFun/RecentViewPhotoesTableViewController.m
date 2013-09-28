@@ -73,8 +73,8 @@
 	NSLog(@"recentViewedPhotoes = %@", [self.recentViewedPhotoes description]);
 	NSDictionary *recentViewedPhotoData = self.recentViewedPhotoes[indexPath.row];
 	
-	NSString *photoTitle = [recentViewedPhotoData valueForKey:@"title"];
-	NSString *photoDescription = [recentViewedPhotoData valueForKey:@"description._content"];
+	NSString *photoTitle = [recentViewedPhotoData valueForKey:FLICKR_PHOTO_TITLE];
+	NSString *photoDescription = [recentViewedPhotoData valueForKey:FLICKR_PHOTO_DESCRIPTION];
 	if ([photoTitle length] >0) {
 		cell.textLabel.text = photoTitle;
 		cell.detailTextLabel.text = photoDescription;

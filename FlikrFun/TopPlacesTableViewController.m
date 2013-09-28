@@ -19,7 +19,6 @@
 @implementation TopPlacesTableViewController
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
-	
 	if ([segue.identifier isEqualToString:@"Place Photoes Sague"]) {
 		NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
 		NSDictionary *selectedPlaceInfo = [self.topPlaces objectAtIndex:indexPath.row];

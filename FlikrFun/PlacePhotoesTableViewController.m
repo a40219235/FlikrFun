@@ -13,14 +13,28 @@
 @interface PlacePhotoesTableViewController ()
 
 @property (nonatomic, strong) NSArray *photoesOfPlace;
+
 @end
 
 #define RECENT_VIEW_PHOTO_KEY @"recent_view_photo_key"
 
 @implementation PlacePhotoesTableViewController
+@synthesize photoesOfPlace = _photoesOfPlace;
+
+#pragma mark - setters and getters
+-(void)setPhotoesOfPlace:(NSArray *)photoesOfPlace{
+	if (_photoesOfPlace != photoesOfPlace) {
+		_photoesOfPlace = photoesOfPlace;
+		//only reload the table if we are on the current table scene
+		if (self.tableView.window) {
+			[self.tableView reloadData];
+		}
+	}
+}
+
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
-	
+
 	NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
 	NSDictionary *selectedPhotoInfo = [self.photoesOfPlace objectAtIndex:indexPath.row];
 	PhotoViewController	*photoViewController = segue.destinationViewController;
@@ -39,15 +53,38 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	
-	self.photoesOfPlace = [FlickrFetcher photosInPlace:self.placeInfo maxResults:2];
-	NSLog(@"self.photoesOfPlace = %@", [self.photoesOfPlace description]);
+	[self loadPhotoesWithCompletionHandler:nil];
+}
+
+-(void)viewDidAppear:(BOOL)animated{
+	[super viewDidAppear:animated];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+- (IBAction)refreshPressed:(id)sender {
+	UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+	[spinner startAnimating];
+	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:spinner];
+	[self loadPhotoesWithCompletionHandler:^{
+		self.navigationItem.rightBarButtonItem = sender;
+	}];
+}
+
+-(void)loadPhotoesWithCompletionHandler:(void(^)(void))completionHandler{
+	dispatch_queue_t downloadPhotoQueue	= dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
+	dispatch_async(downloadPhotoQueue, ^{
+		NSArray *photoesOfPlace = [FlickrFetcher photosInPlace:self.placeInfo maxResults:2];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			self.photoesOfPlace = photoesOfPlace;
+			if (completionHandler) completionHandler();
+		});
+	});
+	//	NSLog(@"self.placeInfo = %@", self.placeInfo);
+	//	NSLog(@"self.photoesOfPlace = %@", [self.photoesOfPlace description]);
 }
 
 #pragma mark - Table view data source
@@ -62,8 +99,8 @@
     static NSString *CellIdentifier = @"Photoes Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
-	NSString *photoTitle = [self.photoesOfPlace[indexPath.row] valueForKey:@"title"];
-	NSString *photoDescription = [self.photoesOfPlace[indexPath.row] valueForKey:@"description._content"];
+	NSString *photoTitle = [self.photoesOfPlace[indexPath.row] valueForKey:FLICKR_PHOTO_TITLE];
+	NSString *photoDescription = [self.photoesOfPlace[indexPath.row] valueForKey:FLICKR_PHOTO_DESCRIPTION];
 	if ([photoTitle length] >0) {
 		cell.textLabel.text = photoTitle;
 		cell.detailTextLabel.text = photoDescription;

@@ -11,6 +11,7 @@
 @interface PhotoViewController ()<UIScrollViewDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (nonatomic, strong) UIImageView *imageView;
+@property (nonatomic, strong) UIActivityIndicatorView * spinner;
 
 @end
 
@@ -29,31 +30,21 @@
 {
     [super viewDidLoad];
 	
-	UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:self.photoURL]];
-	self.imageView = [[UIImageView alloc] initWithImage:image];
-	self.imageView.frame = CGRectMake(0,0,image.size.width, image.size.height);
-	[self.scrollView addSubview:self.imageView];
+	self.spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+	[self.spinner startAnimating];
+	[self.view addSubview:self.spinner];
 	
-	self.scrollView.contentSize = image.size;
+	[self downloadImageWithCompletionHandler:^{
+		[self.spinner removeFromSuperview];
+		self.spinner = NULL;
+	}];
 }
 
 -(void)viewDidAppear:(BOOL)animated
 {
 	[super viewDidAppear:animated];
-	
-	CGRect scrollViewFrame = self.scrollView.frame;
-	NSLog(@"scrollViewFrame = %f, %f", scrollViewFrame.size.width, scrollViewFrame.size.height);
-	CGFloat scaleWidth = scrollViewFrame.size.width / self.scrollView.contentSize.width;
-	NSLog(@"self.scrollView.contentSize. = %f, %f", self.scrollView.contentSize.width, self.scrollView.contentSize.height);
-	CGFloat scaleHeight = scrollViewFrame.size.height/ self.scrollView.contentSize.height;
-	CGFloat minScale = MIN(scaleWidth, scaleHeight);
-	NSLog(@"scaleWidth = %f,scaleHeight =  %f", scaleWidth, scaleHeight);
-	
-	self.scrollView.minimumZoomScale = minScale;
-	self.scrollView.maximumZoomScale = 1.0f;
-	self.scrollView.zoomScale = minScale;
-	
-	[self centerScrollViewContents];
+	//set spinner position here cause scrollView is inited here
+	self.spinner.center = self.scrollView.center;
 }
 
 - (void)didReceiveMemoryWarning
@@ -61,6 +52,44 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+#pragma mark- download Image Queque
+-(void)downloadImageWithCompletionHandler:(void(^)(void))completionHandler{
+	dispatch_queue_t downloadImageQueue	= dispatch_queue_create("download image queue", NULL);
+	dispatch_async(downloadImageQueue, ^{
+		NSData *imageData = [NSData dataWithContentsOfURL:self.photoURL];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			UIImage *image = [UIImage imageWithData:imageData];
+			self.imageView = [[UIImageView alloc] initWithImage:image];
+			self.imageView.frame = CGRectMake(0,0,image.size.width, image.size.height);
+			[self.scrollView addSubview:self.imageView];
+			self.scrollView.contentSize = image.size;
+
+			CGRect scrollViewFrame = self.scrollView.frame;
+			NSLog(@"scrollViewFrame = %f, %f", scrollViewFrame.size.width, scrollViewFrame.size.height);
+			CGFloat scaleWidth = scrollViewFrame.size.width / self.scrollView.contentSize.width;
+			NSLog(@"self.scrollView.contentSize. = %f, %f", self.scrollView.contentSize.width, self.scrollView.contentSize.height);
+			CGFloat scaleHeight = scrollViewFrame.size.height/ self.scrollView.contentSize.height;
+			CGFloat minScale = MIN(scaleWidth, scaleHeight);
+			NSLog(@"scaleWidth = %f,scaleHeight =  %f", scaleWidth, scaleHeight);
+			
+			self.scrollView.minimumZoomScale = minScale;
+			self.scrollView.maximumZoomScale = 1.0f;
+			self.scrollView.zoomScale = minScale;
+			
+			[self centerScrollViewContents];
+			
+			if (completionHandler) {
+				completionHandler();
+			}
+			
+			
+		});
+	});
+	//	NSLog(@"self.placeInfo = %@", self.placeInfo);
+	//	NSLog(@"self.photoesOfPlace = %@", [self.photoesOfPlace description]);
+}
+
 
 -(void)LoggingCGSize:(CGSize)size withString:(NSString *)string{
 	NSLog(@"%@.width = %f, %@.height = %f", string, size.width, string, size.height);
