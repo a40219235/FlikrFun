@@ -9,23 +9,59 @@
 #import "TopPlacesTableViewController.h"
 #import "FlickrFetcher.h"
 #import "PlacePhotoesTableViewController.h"
+#import "MapKitViewController.h"
+#import "FlikrerPhotoAnnotation.h"
 
-@interface TopPlacesTableViewController ()
+@interface TopPlacesTableViewController () <MapKitViewControllerDelegate>
 
 @property(nonatomic, strong) NSArray *topPlaces;
 
 @end
 
 @implementation TopPlacesTableViewController
+@synthesize topPlaces = _topPlaces;
+
+-(void)setTopPlaces:(NSArray *)topPlaces{
+	if (![_topPlaces isEqualToArray:topPlaces]){
+		_topPlaces = topPlaces;
+		// as long as self is on the stack, reload it
+		if (self) {
+			NSLog(@"topViewController = %@", [[self.navigationController topViewController] class]);
+			[self.tableView reloadData];
+		}
+		
+		//if present scene is map kit view controller, update annotations
+		if ([[[self.navigationController topViewController] class] isEqual:[MapKitViewController class]]) {
+			NSLog(@"topViewController = %@", [[self.navigationController topViewController] class]);
+			MapKitViewController *mapKitController = (MapKitViewController *)[self.navigationController topViewController];
+			mapKitController.annotations = [self mapAnnotations];
+		}
+	}
+}
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
 	if ([segue.identifier isEqualToString:@"Place Photoes Sague"]) {
 		NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
 		NSDictionary *selectedPlaceInfo = [self.topPlaces objectAtIndex:indexPath.row];
-//		NSLog(@"selectedPlaceInfo = %@", selectedPlaceInfo);
+		NSLog(@"selectedPlaceInfo = %@", selectedPlaceInfo);
 		PlacePhotoesTableViewController *placePhotoesTVC = segue.destinationViewController;
 		placePhotoesTVC.placeInfo = selectedPlaceInfo;
 	}
+	
+	if([segue.identifier isEqualToString:@"Map Kit View Segue"]){
+		MapKitViewController *mapKitViewController = segue.destinationViewController;
+		mapKitViewController.annotations = [self mapAnnotations];
+		mapKitViewController.delegate = self;
+		NSLog(@"photoes send  = %@", mapKitViewController.annotations);
+	}
+}
+
+-(NSArray *)mapAnnotations{
+	NSMutableArray *annotations = [[NSMutableArray alloc] init];
+	for (NSDictionary *places in self.topPlaces) {
+		[annotations addObject:[FlikrerPhotoAnnotation annotationForPhotoes:places]];
+	}
+	return annotations;
 }
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -40,34 +76,48 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-    
-     self.clearsSelectionOnViewWillAppear = NO;
- 
-     self.navigationItem.rightBarButtonItem = self.editButtonItem;
-	
-	self.topPlaces = [FlickrFetcher topPlaces];
-//	NSLog(@"topPlaces = %@", [self.topPlaces description]);
+	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"refresh" style:UIBarButtonItemStyleBordered target:self action:@selector(refreshPressed:)];
+	[self refreshPressed:self.navigationItem.rightBarButtonItem];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    // Dispose of any resources that can be recreated.	
+}
+
+#pragma mark - queue
+-(void)downloadDataWithCompletionHandler:(void(^)(void))completionHandler{
+	dispatch_queue_t downloadImageQueue	= dispatch_queue_create("download data queue", NULL);
+	dispatch_async(downloadImageQueue, ^{
+		NSArray *topPlacesData = [FlickrFetcher topPlaces];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			self.topPlaces = topPlacesData;
+			NSLog(@"topPlaces = %@", [self.topPlaces description]);
+			if (completionHandler) {
+				completionHandler();
+			}
+		});
+	});
+}
+
+#pragma mark - buttons pressed handler
+-(void)refreshPressed:(UIBarButtonItem *)sender {
+	UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+	[spinner startAnimating];
+	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:spinner];
+	[self downloadDataWithCompletionHandler:^{
+		self.navigationItem.rightBarButtonItem = sender;
+	}];
+	
 }
 
 #pragma mark - Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-	//default is 1
-    return 1;
-}
-
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	return 3;
-//    return [self.topPlaces count];
+//	return 3;
+    return [self.topPlaces count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -76,10 +126,8 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
 	
 	NSDictionary *placeDetails= [self.topPlaces objectAtIndex:indexPath.row];
-	cell.textLabel.text = [placeDetails valueForKey:@"woe_name"];
-	cell.detailTextLabel.text = [placeDetails valueForKey:@"_content"];
-    
-
+	cell.textLabel.text = [placeDetails valueForKey:FLICKR_WOE_NAME];
+	cell.detailTextLabel.text = [placeDetails valueForKey:FLICKR_PLACE_NAME];
     
     return cell;
 }
@@ -130,4 +178,13 @@
 //
 //}
 
+
+#pragma mark - MapKitViewControllerDelegate
+-(UIImage *)MapKitViewController:(MapKitViewController *)sender imageForAnnotation:(id<MKAnnotation>)annotation{
+	FlikrerPhotoAnnotation *fpa = (FlikrerPhotoAnnotation *)annotation;
+	NSURL *url = [FlickrFetcher urlForPhoto:fpa.photoes format:FlickrPhotoFormatSquare];
+	NSData *data = [NSData dataWithContentsOfURL:url];
+	
+	return data ? [UIImage imageWithData:data] : nil;
+}
 @end

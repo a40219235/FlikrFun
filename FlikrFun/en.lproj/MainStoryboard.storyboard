@@ -65,12 +65,56 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="sWW-f2-XVv">
-                        <barButtonItem key="rightBarButtonItem" title="Refresh" id="2WG-Kw-WD8"/>
+                        <nil key="title"/>
+                        <barButtonItem key="leftBarButtonItem" title="map" id="2WG-Kw-WD8">
+                            <connections>
+                                <segue destination="XKg-S4-pNM" kind="push" identifier="Map Kit View Segue" id="Fib-Kf-R9Z"/>
+                            </connections>
+                        </barButtonItem>
+                        <button key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="WR0-ho-eUh">
+                            <rect key="frame" x="96" y="6" width="128" height="33"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                            <state key="normal" title="map">
+                                <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <state key="highlighted">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                        </button>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TyR-Op-jz1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="878" y="-1175"/>
+        </scene>
+        <!--Map Kit View Controller-->
+        <scene sceneID="cn9-oq-UxU">
+            <objects>
+                <viewController id="XKg-S4-pNM" customClass="MapKitViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="RCA-cH-PtT">
+                        <rect key="frame" x="0.0" y="64" width="320" height="455"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zlq-93-c1o"/>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="zlq-93-c1o" firstAttribute="trailing" secondItem="RCA-cH-PtT" secondAttribute="trailing" type="default" id="Ay5-cz-s8S"/>
+                            <constraint firstItem="zlq-93-c1o" firstAttribute="leading" secondItem="RCA-cH-PtT" secondAttribute="leading" type="default" id="OXU-hH-gWJ"/>
+                            <constraint firstItem="zlq-93-c1o" firstAttribute="top" secondItem="RCA-cH-PtT" secondAttribute="top" type="default" id="VWO-GM-30L"/>
+                            <constraint firstItem="zlq-93-c1o" firstAttribute="bottom" secondItem="RCA-cH-PtT" secondAttribute="bottom" type="default" id="ZRF-x9-Qih"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="6OZ-4F-LPM"/>
+                    <connections>
+                        <outlet property="mapView" destination="zlq-93-c1o" id="EHj-C3-1fD"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="e6e-dT-OSh" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1656" y="-1851"/>
         </scene>
         <!--Photo View Controller-->
         <scene sceneID="9vA-Ur-VUX">
@@ -101,7 +145,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1vS-39-mHk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1701" y="-1175"/>
+            <point key="canvasLocation" x="1891" y="-645"/>
         </scene>
         <!--Place Photoes Table View Controller-->
         <scene sceneID="Nw1-IK-vBp">
@@ -144,17 +188,11 @@
                             <outlet property="delegate" destination="yoe-bB-KHM" id="BYe-PZ-vA2"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="4FC-WB-g49">
-                        <barButtonItem key="rightBarButtonItem" title="Refresh" id="qPK-sn-nQF">
-                            <connections>
-                                <action selector="refreshPressed:" destination="yoe-bB-KHM" id="Og4-WS-5pe"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="4FC-WB-g49"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="23A-sj-Ekf" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1319" y="-1175"/>
+            <point key="canvasLocation" x="1455" y="-1175"/>
         </scene>
         <!--Recent View Photoes Table View Controller-->
         <scene sceneID="FVw-Dm-fCT">
@@ -215,7 +253,7 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="23a-3A-paV" kind="relationship" relationship="rootViewController" id="dzs-rJ-Qdt"/>
+                        <segue destination="23a-3A-paV" kind="relationship" relationship="rootViewController" id="gL6-mg-Vzj"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="E1D-0c-81B" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -243,6 +281,12 @@
         </scene>
     </scenes>
     <classes>
+        <class className="MapKitViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/MapKitViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="mapView" candidateClass="MKMapView"/>
+            </relationships>
+        </class>
         <class className="NSLayoutConstraint" superclassName="NSObject">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
         </class>
@@ -254,9 +298,6 @@
         </class>
         <class className="PlacePhotoesTableViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/PlacePhotoesTableViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="refreshPressed:"/>
-            </relationships>
         </class>
         <class className="RecentViewPhotoesTableViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/RecentViewPhotoesTableViewController.h"/>

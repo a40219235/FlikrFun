@@ -34,7 +34,6 @@
 
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
-
 	NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
 	NSDictionary *selectedPhotoInfo = [self.photoesOfPlace objectAtIndex:indexPath.row];
 	PhotoViewController	*photoViewController = segue.destinationViewController;
@@ -53,7 +52,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	[self loadPhotoesWithCompletionHandler:nil];
+	
+	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"refresh" style:UIBarButtonItemStyleBordered target:self action:@selector(refreshPressed:)];
+	[self refreshPressed:self.navigationItem.rightBarButtonItem];
+	
 }
 
 -(void)viewDidAppear:(BOOL)animated{
@@ -65,7 +67,7 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-- (IBAction)refreshPressed:(id)sender {
+- (void)refreshPressed:(id)sender {
 	UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
 	[spinner startAnimating];
 	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:spinner];
@@ -86,6 +88,9 @@
 	//	NSLog(@"self.placeInfo = %@", self.placeInfo);
 	//	NSLog(@"self.photoesOfPlace = %@", [self.photoesOfPlace description]);
 }
+
+#pragma mark - buttons pressed handler
+
 
 #pragma mark - Table view data source
 
