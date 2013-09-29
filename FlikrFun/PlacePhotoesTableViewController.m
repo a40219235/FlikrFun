@@ -9,8 +9,10 @@
 #import "PlacePhotoesTableViewController.h"
 #import "FlickrFetcher.h"
 #import "PhotoViewController.h"
+#import "MapKitViewController.h"
+#import "FlikrerPhotoAnnotation.h"
 
-@interface PlacePhotoesTableViewController ()
+@interface PlacePhotoesTableViewController () <MapKitViewControllerDelegate>
 
 @property (nonatomic, strong) NSArray *photoesOfPlace;
 
@@ -26,18 +28,40 @@
 	if (_photoesOfPlace != photoesOfPlace) {
 		_photoesOfPlace = photoesOfPlace;
 		//only reload the table if we are on the current table scene
-		if (self.tableView.window) {
+		if (self) {
 			[self.tableView reloadData];
+		}
+		
+		//if present scene is map kit view controller, update annotations
+		if ([[[self.navigationController topViewController] class] isEqual:[MapKitViewController class]]) {
+			MapKitViewController *mapKitController = (MapKitViewController *)[self.navigationController topViewController];
+			mapKitController.annotations = [self mapAnnotations];
 		}
 	}
 }
 
+-(NSArray *)mapAnnotations{
+	NSMutableArray *annotations = [[NSMutableArray alloc] init];
+	[self.photoesOfPlace enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+		NSDictionary *dictObj = (NSDictionary *)obj;
+		[annotations addObject:[FlikrerPhotoAnnotation annotationForPhotoes:dictObj]];
+	}];
+	 return annotations;
+}
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
-	NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-	NSDictionary *selectedPhotoInfo = [self.photoesOfPlace objectAtIndex:indexPath.row];
-	PhotoViewController	*photoViewController = segue.destinationViewController;
-	photoViewController.photoURL = [FlickrFetcher urlForPhoto:selectedPhotoInfo format:FlickrPhotoFormatLarge];
+	if ([segue.identifier isEqualToString:@"Photo View Segue"]) {
+		NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
+		NSDictionary *selectedPhotoInfo = [self.photoesOfPlace objectAtIndex:indexPath.row];
+		PhotoViewController	*photoViewController = segue.destinationViewController;
+		photoViewController.photoURL = [FlickrFetcher urlForPhoto:selectedPhotoInfo format:FlickrPhotoFormatLarge];
+	}
+	
+	if ([segue.identifier isEqualToString:@"Map Kit View Segue"]) {
+		MapKitViewController *mapKitViewController = segue.destinationViewController;
+		mapKitViewController.annotations = [self mapAnnotations];
+		mapKitViewController.delegate = self;
+	}
 }
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -79,14 +103,14 @@
 -(void)loadPhotoesWithCompletionHandler:(void(^)(void))completionHandler{
 	dispatch_queue_t downloadPhotoQueue	= dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
 	dispatch_async(downloadPhotoQueue, ^{
-		NSArray *photoesOfPlace = [FlickrFetcher photosInPlace:self.placeInfo maxResults:2];
+		NSArray *photoesOfPlace = [FlickrFetcher photosInPlace:self.placeInfo maxResults:50];
 		dispatch_async(dispatch_get_main_queue(), ^{
 			self.photoesOfPlace = photoesOfPlace;
 			if (completionHandler) completionHandler();
+				NSLog(@"self.placeInfo = %@", self.placeInfo);
+				NSLog(@"self.photoesOfPlace = %@", [self.photoesOfPlace description]);
 		});
 	});
-	//	NSLog(@"self.placeInfo = %@", self.placeInfo);
-	//	NSLog(@"self.photoesOfPlace = %@", [self.photoesOfPlace description]);
 }
 
 #pragma mark - buttons pressed handler
@@ -169,6 +193,15 @@
 	[recentViewPhotoes addObject:selectedPhoto];
 	[[NSUserDefaults standardUserDefaults] setObject:recentViewPhotoes forKey:RECENT_VIEW_PHOTO_KEY];
 	[[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+#pragma mark - MapKitViewControllerDelegate
+-(UIImage *)MapKitViewController:(MapKitViewController *)sender imageForAnnotation:(id<MKAnnotation>)annotation{
+	FlikrerPhotoAnnotation *fpa = (FlikrerPhotoAnnotation *)annotation;
+	NSURL *url = [FlickrFetcher urlForPhoto:fpa.photoes format:FlickrPhotoFormatSquare];
+	NSData *data = [NSData dataWithContentsOfURL:url];
+	
+	return data ? [UIImage imageWithData:data] : nil;
 }
 
 @end

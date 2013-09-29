@@ -33,7 +33,7 @@
 
 + (NSArray *)topPlaces
 {
-    NSString *request = [NSString stringWithFormat:@"http://api.flickr.com/services/rest/?method=flickr.places.getTopPlacesList&place_type_id=7"];
+    NSString *request = [NSString stringWithFormat:@"http://api.flickr.com/services/rest/?method=flickr.places.getTopPlacesList&place_type_id=8"];
     return [[self executeFlickrFetch:request] valueForKeyPath:@"places.place"];
 }
 

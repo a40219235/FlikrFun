@@ -12,7 +12,7 @@
 #import "MapKitViewController.h"
 #import "FlikrerPhotoAnnotation.h"
 
-@interface TopPlacesTableViewController () <MapKitViewControllerDelegate>
+@interface TopPlacesTableViewController ()
 
 @property(nonatomic, strong) NSArray *topPlaces;
 
@@ -26,13 +26,13 @@
 		_topPlaces = topPlaces;
 		// as long as self is on the stack, reload it
 		if (self) {
-			NSLog(@"topViewController = %@", [[self.navigationController topViewController] class]);
+//			NSLog(@"topViewController = %@", [[self.navigationController topViewController] class]);
 			[self.tableView reloadData];
 		}
 		
 		//if present scene is map kit view controller, update annotations
 		if ([[[self.navigationController topViewController] class] isEqual:[MapKitViewController class]]) {
-			NSLog(@"topViewController = %@", [[self.navigationController topViewController] class]);
+//			NSLog(@"topViewController = %@", [[self.navigationController topViewController] class]);
 			MapKitViewController *mapKitController = (MapKitViewController *)[self.navigationController topViewController];
 			mapKitController.annotations = [self mapAnnotations];
 		}
@@ -43,7 +43,7 @@
 	if ([segue.identifier isEqualToString:@"Place Photoes Sague"]) {
 		NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
 		NSDictionary *selectedPlaceInfo = [self.topPlaces objectAtIndex:indexPath.row];
-		NSLog(@"selectedPlaceInfo = %@", selectedPlaceInfo);
+//		NSLog(@"selectedPlaceInfo = %@", selectedPlaceInfo);
 		PlacePhotoesTableViewController *placePhotoesTVC = segue.destinationViewController;
 		placePhotoesTVC.placeInfo = selectedPlaceInfo;
 	}
@@ -51,8 +51,7 @@
 	if([segue.identifier isEqualToString:@"Map Kit View Segue"]){
 		MapKitViewController *mapKitViewController = segue.destinationViewController;
 		mapKitViewController.annotations = [self mapAnnotations];
-		mapKitViewController.delegate = self;
-		NSLog(@"photoes send  = %@", mapKitViewController.annotations);
+//		NSLog(@"photoes send  = %@", mapKitViewController.annotations);
 	}
 }
 
@@ -177,14 +176,4 @@
 //{
 //
 //}
-
-
-#pragma mark - MapKitViewControllerDelegate
--(UIImage *)MapKitViewController:(MapKitViewController *)sender imageForAnnotation:(id<MKAnnotation>)annotation{
-	FlikrerPhotoAnnotation *fpa = (FlikrerPhotoAnnotation *)annotation;
-	NSURL *url = [FlickrFetcher urlForPhoto:fpa.photoes format:FlickrPhotoFormatSquare];
-	NSData *data = [NSData dataWithContentsOfURL:url];
-	
-	return data ? [UIImage imageWithData:data] : nil;
-}
 @end
