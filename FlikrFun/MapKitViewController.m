@@ -69,8 +69,9 @@
 		annotationView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"MapVC"];
 		annotationView.canShowCallout = YES;
 		annotationView.enabled = YES;
-		annotationView.leftCalloutAccessoryView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
+		annotationView.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
 	}
+	
 	[(UIImageView *)annotationView.leftCalloutAccessoryView setImage:nil];
 	annotationView.annotation = annotation;
 	return annotationView;
@@ -78,7 +79,14 @@
 
 -(void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view{
 	UIImage *image = [self.delegate MapKitViewController:self imageForAnnotation:view.annotation];
-	[(UIImageView *)view.leftCalloutAccessoryView setImage:image];
+	if (image) {
+		view.leftCalloutAccessoryView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
+		[(UIImageView *)view.leftCalloutAccessoryView setImage:image];
+	}
+}
+
+-(void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control{
+	[self.delegate MapKitViewController:self annotationView:view calloutAccessoryControlTapped:control];
 }
 
 @end

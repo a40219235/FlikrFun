@@ -14,7 +14,9 @@
 
 @protocol MapKitViewControllerDelegate
 
+@optional
 -(UIImage *)MapKitViewController:(MapKitViewController *)sender imageForAnnotation:(id <MKAnnotation>)annotation;
+-(void)MapKitViewController:(MapKitViewController *)sender annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control;
 
 @end
 
