@@ -19,8 +19,6 @@
 
 @end
 
-#define RECENT_VIEW_PHOTO_KEY @"recent_view_photo_key"
-
 @implementation PlacePhotoesTableViewController
 @synthesize photoesOfPlace = _photoesOfPlace;
 
@@ -178,12 +176,12 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	NSDictionary *selectedPhoto = [self.photoesOfPlace objectAtIndex:indexPath.row];
-	NSMutableArray *recentViewPhotoes = [[[NSUserDefaults standardUserDefaults] objectForKey:RECENT_VIEW_PHOTO_KEY] mutableCopy];
+	NSMutableArray *recentViewPhotoes = [[[NSUserDefaults standardUserDefaults] objectForKey:FLICKR_RECENT_VIEW_PHOTO_KEY] mutableCopy];
 	if (!recentViewPhotoes) {
 		recentViewPhotoes = [NSMutableArray array];
 	}
 	[recentViewPhotoes addObject:selectedPhoto];
-	[[NSUserDefaults standardUserDefaults] setObject:recentViewPhotoes forKey:RECENT_VIEW_PHOTO_KEY];
+	[[NSUserDefaults standardUserDefaults] setObject:recentViewPhotoes forKey:FLICKR_RECENT_VIEW_PHOTO_KEY];
 	[[NSUserDefaults standardUserDefaults] synchronize];
 }
 

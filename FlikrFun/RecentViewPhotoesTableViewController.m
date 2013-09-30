@@ -15,7 +15,7 @@
 @property (nonatomic, strong) NSArray *recentViewedPhotoes;
 
 @end
-#define RECENT_VIEW_PHOTO_KEY @"recent_view_photo_key"
+
 @implementation RecentViewPhotoesTableViewController
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
@@ -48,7 +48,7 @@
 }
 
 -(void)viewWillAppear:(BOOL)animated{
-	self.recentViewedPhotoes = [[NSUserDefaults standardUserDefaults] objectForKey:RECENT_VIEW_PHOTO_KEY];
+	self.recentViewedPhotoes = [[NSUserDefaults standardUserDefaults] objectForKey:FLICKR_RECENT_VIEW_PHOTO_KEY];
 	[self.tableView reloadData];
 }
 
@@ -84,8 +84,6 @@
 		cell.textLabel.text = @"Unknown";
 	}
 	
-    return cell;
-    
     return cell;
 }
 

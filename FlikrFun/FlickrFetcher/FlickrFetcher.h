@@ -15,6 +15,7 @@
 #define FLICKR_LATITUDE @"latitude"
 #define FLICKR_LONGITUDE @"longitude"
 #define FLICKR_WOE_NAME @"woe_name"
+#define FLICKR_RECENT_VIEW_PHOTO_KEY @"recent_view_photo_key"
 
 typedef enum {
 	FlickrPhotoFormatSquare = 1,
