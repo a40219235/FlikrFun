@@ -12,6 +12,7 @@
 #import "MapKitViewController.h"
 #import "FlikrerPhotoAnnotation.h"
 #import "PhotoViewController.h"
+#import "TableViewUtility.h"
 
 @interface TopPlacesTableViewController () <MapKitViewControllerDelegate>
 
@@ -87,22 +88,6 @@
     // Dispose of any resources that can be recreated.	
 }
 
-#pragma mark - queue
--(void)loadDataUsingBlock:(void(^)(void))dataBlock InQueue:(dispatch_queue_t)queue withComplitionHandler:(void(^)(void))completionHandler{
-	if (!queue) {
-		queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-	}
-	dispatch_async(queue, ^{
-		NSAssert(dataBlock, @"dataBlockIsNil");
-		dataBlock();
-		dispatch_async(dispatch_get_main_queue(), ^{
-			if (completionHandler) {
-				completionHandler();
-			}
-		});
-	});
-}
-
 #pragma mark - buttons pressed handler
 -(void)refreshPressed:(UIBarButtonItem *)sender {
 	UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
@@ -110,7 +95,7 @@
 	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:spinner];
 	
 	__block NSArray * topPlacesData;
-	[self loadDataUsingBlock:^{
+	[TableViewUtility loadDataUsingBlock:^{
 		topPlacesData = [FlickrFetcher topPlaces];
 	}InQueue:nil withComplitionHandler:^{
 		self.topPlaces = topPlacesData;
@@ -195,10 +180,10 @@
 }
 
 -(void)MapKitViewController:(MapKitViewController *)sender annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control{
+	//if there is photo, navigate to show the photo instead, else zoom to show the current place
 	FlikrerPhotoAnnotation * anotation = (FlikrerPhotoAnnotation *)view.annotation;
-	NSURL *url = [FlickrFetcher urlForPhoto:anotation.photoes format:FlickrPhotoFormatOriginal];
+	NSURL *url = [FlickrFetcher urlForPhoto:anotation.photoes format:FlickrPhotoFormatLarge];
 	if (url) {
-		NSLog(@"url exist = %@", url);
 		UIStoryboard *sb = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
 		PhotoViewController *photoViewController = [sb instantiateViewControllerWithIdentifier:@"Photo View Controller"];
 		photoViewController.photoURL = url;
@@ -206,13 +191,15 @@
 		return;
 	}
 	
+	//replace the accessory to spinner to avoid multiple clicks, and don't worry about reset back to uibutton, cause it will get removed and added back
+	UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+	[spinner startAnimating];
+	view.rightCalloutAccessoryView = nil;
+	view.rightCalloutAccessoryView = spinner;
 	
-	NSLog(@"anotation.photo = %@", anotation.photoes);
 	CLLocationCoordinate2D center = [view.annotation coordinate];
-	NSLog(@"center.longtitude = %f, center.latittude = %f",center.longitude, center.latitude);
-	NSLog(@"title = %@", [view.annotation title]);
 	__block NSArray *photoesOfPlace;
-	[self loadDataUsingBlock:^{
+	[TableViewUtility loadDataUsingBlock:^{
 		photoesOfPlace = [FlickrFetcher photosInPlace:anotation.photoes maxResults:50];
 	}InQueue:nil withComplitionHandler:^{
 		//do nothing if current viewController isn't MapKitViewController

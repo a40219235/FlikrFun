@@ -11,6 +11,7 @@
 #import "PhotoViewController.h"
 #import "MapKitViewController.h"
 #import "FlikrerPhotoAnnotation.h"
+#import "TableViewUtility.h"
 
 @interface PlacePhotoesTableViewController () <MapKitViewControllerDelegate>
 
@@ -95,26 +96,17 @@
 	UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
 	[spinner startAnimating];
 	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:spinner];
-	[self loadPhotoesWithCompletionHandler:^{
+	
+	__block NSArray *photoesOfPlace;
+	[TableViewUtility loadDataUsingBlock:^{
+		photoesOfPlace = [FlickrFetcher photosInPlace:self.placeInfo maxResults:50];
+	}InQueue:nil withComplitionHandler:^{
+		self.photoesOfPlace = photoesOfPlace;
 		self.navigationItem.rightBarButtonItem = sender;
+		//NSLog(@"self.placeInfo = %@", self.placeInfo);
+		//NSLog(@"self.photoesOfPlace = %@", [self.photoesOfPlace description]);
 	}];
 }
-
--(void)loadPhotoesWithCompletionHandler:(void(^)(void))completionHandler{
-	dispatch_queue_t downloadPhotoQueue	= dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
-	dispatch_async(downloadPhotoQueue, ^{
-		NSArray *photoesOfPlace = [FlickrFetcher photosInPlace:self.placeInfo maxResults:50];
-		dispatch_async(dispatch_get_main_queue(), ^{
-			self.photoesOfPlace = photoesOfPlace;
-			if (completionHandler) completionHandler();
-				//NSLog(@"self.placeInfo = %@", self.placeInfo);
-				//NSLog(@"self.photoesOfPlace = %@", [self.photoesOfPlace description]);
-		});
-	});
-}
-
-#pragma mark - buttons pressed handler
-
 
 #pragma mark - Table view data source
 
@@ -202,6 +194,17 @@
 	NSData *data = [NSData dataWithContentsOfURL:url];
 	
 	return data ? [UIImage imageWithData:data] : nil;
+}
+
+-(void)MapKitViewController:(MapKitViewController *)sender annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control{
+	FlikrerPhotoAnnotation * anotation = (FlikrerPhotoAnnotation *)view.annotation;
+	NSLog(@"anotation.photoes = %@", anotation.photoes);
+	NSURL *url = [FlickrFetcher urlForPhoto:anotation.photoes format:FlickrPhotoFormatLarge];
+	NSLog(@"url = %@", url);
+	UIStoryboard *sb = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+	PhotoViewController *photoViewController = [sb instantiateViewControllerWithIdentifier:@"Photo View Controller"];
+	photoViewController.photoURL = url;
+	[self.navigationController pushViewController:photoViewController animated:YES];
 }
 
 @end
