@@ -117,7 +117,7 @@
         <!--Photo View Controller-->
         <scene sceneID="9vA-Ur-VUX">
             <objects>
-                <viewController id="fh5-NT-QXK" customClass="PhotoViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Photo View Controller" id="fh5-NT-QXK" customClass="PhotoViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="fiB-6C-KlZ">
                         <rect key="frame" x="0.0" y="64" width="320" height="455"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -301,7 +301,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="jm7-cb-ahU"/>
+        <segue reference="dfX-nh-7ij"/>
         <segue reference="hAz-PC-kUa"/>
     </inferredMetricsTieBreakers>
 </document>

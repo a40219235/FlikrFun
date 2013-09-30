@@ -107,8 +107,8 @@
 		dispatch_async(dispatch_get_main_queue(), ^{
 			self.photoesOfPlace = photoesOfPlace;
 			if (completionHandler) completionHandler();
-				NSLog(@"self.placeInfo = %@", self.placeInfo);
-				NSLog(@"self.photoesOfPlace = %@", [self.photoesOfPlace description]);
+				//NSLog(@"self.placeInfo = %@", self.placeInfo);
+				//NSLog(@"self.photoesOfPlace = %@", [self.photoesOfPlace description]);
 		});
 	});
 }

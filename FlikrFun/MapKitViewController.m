@@ -9,7 +9,6 @@
 #import "MapKitViewController.h"
 
 @interface MapKitViewController ()<MKMapViewDelegate>
-@property (weak, nonatomic) IBOutlet MKMapView *mapView;
 
 @end
 
@@ -78,6 +77,10 @@
 }
 
 -(void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view{
+	if (![self.delegate respondsToSelector:@selector(MapKitViewController:imageForAnnotation:)]) {
+		return;
+	}
+	
 	UIImage *image = [self.delegate MapKitViewController:self imageForAnnotation:view.annotation];
 	if (image) {
 		view.leftCalloutAccessoryView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
@@ -86,7 +89,11 @@
 }
 
 -(void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control{
+	if (![self.delegate respondsToSelector:@selector(MapKitViewController:annotationView:calloutAccessoryControlTapped:)]) {
+		return;
+	}
 	[self.delegate MapKitViewController:self annotationView:view calloutAccessoryControlTapped:control];
+	
 }
 
 @end

@@ -12,7 +12,7 @@
 
 @class MapKitViewController;
 
-@protocol MapKitViewControllerDelegate
+@protocol MapKitViewControllerDelegate<NSObject>
 
 @optional
 -(UIImage *)MapKitViewController:(MapKitViewController *)sender imageForAnnotation:(id <MKAnnotation>)annotation;
@@ -25,5 +25,7 @@
 @property (nonatomic, strong) NSArray *annotations;
 
 @property (nonatomic, weak) id <MapKitViewControllerDelegate> delegate;
+
+@property (weak, nonatomic) IBOutlet MKMapView *mapView;
 
 @end

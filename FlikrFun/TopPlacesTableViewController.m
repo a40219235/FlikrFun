@@ -11,8 +11,9 @@
 #import "PlacePhotoesTableViewController.h"
 #import "MapKitViewController.h"
 #import "FlikrerPhotoAnnotation.h"
+#import "PhotoViewController.h"
 
-@interface TopPlacesTableViewController ()
+@interface TopPlacesTableViewController () <MapKitViewControllerDelegate>
 
 @property(nonatomic, strong) NSArray *topPlaces;
 
@@ -43,7 +44,7 @@
 	if ([segue.identifier isEqualToString:@"Place Photoes Sague"]) {
 		NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
 		NSDictionary *selectedPlaceInfo = [self.topPlaces objectAtIndex:indexPath.row];
-//		NSLog(@"selectedPlaceInfo = %@", selectedPlaceInfo);
+		NSLog(@"selectedPlaceInfo = %@", selectedPlaceInfo);
 		PlacePhotoesTableViewController *placePhotoesTVC = segue.destinationViewController;
 		placePhotoesTVC.placeInfo = selectedPlaceInfo;
 	}
@@ -51,6 +52,7 @@
 	if([segue.identifier isEqualToString:@"Map Kit View Segue"]){
 		MapKitViewController *mapKitViewController = segue.destinationViewController;
 		mapKitViewController.annotations = [self mapAnnotations];
+		mapKitViewController.delegate = self;
 //		NSLog(@"photoes send  = %@", mapKitViewController.annotations);
 	}
 }
@@ -86,13 +88,14 @@
 }
 
 #pragma mark - queue
--(void)downloadDataWithCompletionHandler:(void(^)(void))completionHandler{
-	dispatch_queue_t downloadImageQueue	= dispatch_queue_create("download data queue", NULL);
-	dispatch_async(downloadImageQueue, ^{
-		NSArray *topPlacesData = [FlickrFetcher topPlaces];
+-(void)loadDataUsingBlock:(void(^)(void))dataBlock InQueue:(dispatch_queue_t)queue withComplitionHandler:(void(^)(void))completionHandler{
+	if (!queue) {
+		queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+	}
+	dispatch_async(queue, ^{
+		NSAssert(dataBlock, @"dataBlockIsNil");
+		dataBlock();
 		dispatch_async(dispatch_get_main_queue(), ^{
-			self.topPlaces = topPlacesData;
-			NSLog(@"topPlaces = %@", [self.topPlaces description]);
 			if (completionHandler) {
 				completionHandler();
 			}
@@ -105,10 +108,15 @@
 	UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
 	[spinner startAnimating];
 	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:spinner];
-	[self downloadDataWithCompletionHandler:^{
+	
+	__block NSArray * topPlacesData;
+	[self loadDataUsingBlock:^{
+		topPlacesData = [FlickrFetcher topPlaces];
+	}InQueue:nil withComplitionHandler:^{
+		self.topPlaces = topPlacesData;
+		//			NSLog(@"topPlaces = %@", [self.topPlaces description]);
 		self.navigationItem.rightBarButtonItem = sender;
 	}];
-	
 }
 
 #pragma mark - Table view data source
@@ -176,4 +184,51 @@
 //{
 //
 //}
+
+#pragma mark - MapKitViewControllerDelegate
+-(UIImage *)MapKitViewController:(MapKitViewController *)sender imageForAnnotation:(id<MKAnnotation>)annotation{
+	FlikrerPhotoAnnotation *fpa = (FlikrerPhotoAnnotation *)annotation;
+	NSURL *url = [FlickrFetcher urlForPhoto:fpa.photoes format:FlickrPhotoFormatSquare];
+	NSData *data = [NSData dataWithContentsOfURL:url];
+	
+	return data ? [UIImage imageWithData:data] : nil;
+}
+
+-(void)MapKitViewController:(MapKitViewController *)sender annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control{
+	FlikrerPhotoAnnotation * anotation = (FlikrerPhotoAnnotation *)view.annotation;
+	NSURL *url = [FlickrFetcher urlForPhoto:anotation.photoes format:FlickrPhotoFormatOriginal];
+	if (url) {
+		NSLog(@"url exist = %@", url);
+		UIStoryboard *sb = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+		PhotoViewController *photoViewController = [sb instantiateViewControllerWithIdentifier:@"Photo View Controller"];
+		photoViewController.photoURL = url;
+		[self.navigationController pushViewController:photoViewController animated:YES];
+		return;
+	}
+	
+	
+	NSLog(@"anotation.photo = %@", anotation.photoes);
+	CLLocationCoordinate2D center = [view.annotation coordinate];
+	NSLog(@"center.longtitude = %f, center.latittude = %f",center.longitude, center.latitude);
+	NSLog(@"title = %@", [view.annotation title]);
+	__block NSArray *photoesOfPlace;
+	[self loadDataUsingBlock:^{
+		photoesOfPlace = [FlickrFetcher photosInPlace:anotation.photoes maxResults:50];
+	}InQueue:nil withComplitionHandler:^{
+		//do nothing if current viewController isn't MapKitViewController
+		if ([[[self.navigationController topViewController] class] isEqual:[MapKitViewController class]]) {
+			NSMutableArray *annotations = [[NSMutableArray alloc] init];
+			for (NSDictionary *places in photoesOfPlace) {
+				[annotations addObject:[FlikrerPhotoAnnotation annotationForPhotoes:places]];
+			}
+			MapKitViewController *mapKitController = (MapKitViewController *)[self.navigationController topViewController];
+			mapKitController.annotations = annotations;
+			
+			//zoom the map to location
+			MKCoordinateSpan span = MKCoordinateSpanMake(10, 10);
+			MKCoordinateRegion regionToDisplay = MKCoordinateRegionMake(center, span);
+			[mapKitController.mapView setRegion:regionToDisplay animated:YES];
+		}
+	}];
+}
 @end
