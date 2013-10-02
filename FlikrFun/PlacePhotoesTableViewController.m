@@ -118,7 +118,7 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
 	NSString *photoTitle = [self.photoesOfPlace[indexPath.row] valueForKey:FLICKR_PHOTO_TITLE];
-	NSString *photoDescription = [self.photoesOfPlace[indexPath.row] valueForKey:FLICKR_PHOTO_DESCRIPTION];
+	NSString *photoDescription = [self.photoesOfPlace[indexPath.row] valueForKeyPath:FLICKR_PHOTO_DESCRIPTION];
 	if ([photoTitle length] >0) {
 		cell.textLabel.text = photoTitle;
 		cell.detailTextLabel.text = photoDescription;

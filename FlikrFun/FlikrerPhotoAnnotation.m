@@ -24,7 +24,7 @@
 	if (![title length]) {
 		title = [self.photoes objectForKey:FLICKR_WOE_NAME];
 		if (![title length]){
-			title = [self.photoes objectForKey:FLICKR_PHOTO_DESCRIPTION];
+			title = [self.photoes valueForKeyPath:FLICKR_PHOTO_DESCRIPTION];
 			if (![title length]) {
 				title = @"Unknown";
 			}
@@ -35,7 +35,7 @@
 }
 
 -(NSString *)subtitle{
-	NSString *subtitle = [self.photoes objectForKey:FLICKR_PHOTO_DESCRIPTION];
+	NSString *subtitle = [self.photoes valueForKeyPath:FLICKR_PHOTO_DESCRIPTION];
 	if (![subtitle length]) {
 		subtitle = [self.photoes objectForKey:FLICKR_PLACE_NAME];
 	}
