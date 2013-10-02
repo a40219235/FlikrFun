@@ -24,10 +24,11 @@
 #pragma mark - setters and getters
 
 -(void)setupFetchedResultsController{
+	NSManagedObjectContext *defaultContext = [UIManagedDocument defaultManagedDocument].managedObjectContext;
 	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"TopPlace"];
-	request.sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"placeName" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)]];
+	request.sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"country.countryName" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)]];
 	
-	self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:[UIManagedDocument defaultManagedDocument].managedObjectContext sectionNameKeyPath:nil cacheName:nil];
+	self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:defaultContext sectionNameKeyPath:@"country.countryName" cacheName:nil];
 }
 
 -(void)fetchFlickkrDataIntoDocument{
@@ -49,7 +50,6 @@
 
 -(void)loadDataFromFile{
 	[UIManagedDocument openDefaultManagedDocumentWithCompletionHandler:^(BOOL sucess) {
-		NSLog(@"sucess = %d", sucess);
 		if (sucess) {
 			[self setupFetchedResultsController];
 			[self fetchFlickkrDataIntoDocument];
@@ -84,6 +84,14 @@
 }
 
 #pragma mark - Table view data source
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+	return [[self.fetchedResultsController sections] count];
+}
+
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+	return [[[self.fetchedResultsController sections] objectAtIndex:section] numberOfObjects];
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"VisitedPlaceCell";
@@ -95,7 +103,6 @@
     
     TopPlace *topPlace = [self.fetchedResultsController objectAtIndexPath:indexPath];
 	cell.textLabel.text = topPlace.woeName;
-	cell.detailTextLabel.text = topPlace.placeName;
     
     return cell;
 }

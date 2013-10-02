@@ -9,6 +9,7 @@
 #import "TopPlace+create.h"
 #import "FlickrFetcher.h"
 #import "UIManagedDocument+Manager.h"
+#import "Country+create.h"
 
 @implementation TopPlace (create)
 
@@ -36,6 +37,7 @@
 		topPlace.uniquePlaceID = [flickrInfo objectForKey:FLICKR_PLACE_ID];
 		topPlace.placeName = [flickrInfo objectForKey:FLICKR_PLACE_NAME];
 		topPlace.woeName = [flickrInfo valueForKeyPath:FLICKR_WOE_NAME];
+		topPlace.country = [Country countryWithCountryName:[FlickrFetcher getCountryName:flickrInfo] inManagedObjectContext:context];
 	}else{
 		topPlace = [matches lastObject];
 	}

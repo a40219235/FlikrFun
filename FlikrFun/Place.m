@@ -2,7 +2,7 @@
 //  Place.m
 //  FlikrFun
 //
-//  Created by Shane Fu on 10/1/13.
+//  Created by Shane Fu on 10/2/13.
 //  Copyright (c) 2013 Shane Fu. All rights reserved.
 //
 

@@ -88,4 +88,10 @@
     return [NSURL URLWithString:[self urlStringForPhoto:photo format:format]];
 }
 
++(NSString *)getCountryName:(NSDictionary *)dictionary{
+	NSString *placeName = [dictionary objectForKey:FLICKR_PLACE_NAME];
+	NSArray *listPlaces = [placeName componentsSeparatedByString:@", "];
+	return (NSString *)[listPlaces lastObject];
+}
+
 @end
