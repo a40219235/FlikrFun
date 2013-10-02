@@ -52,12 +52,9 @@
 		self.scrollView.contentSize = image.size;
 		
 		CGRect scrollViewFrame = self.scrollView.frame;
-		NSLog(@"scrollViewFrame = %f, %f", scrollViewFrame.size.width, scrollViewFrame.size.height);
 		CGFloat scaleWidth = scrollViewFrame.size.width / self.scrollView.contentSize.width;
-		NSLog(@"self.scrollView.contentSize. = %f, %f", self.scrollView.contentSize.width, self.scrollView.contentSize.height);
 		CGFloat scaleHeight = scrollViewFrame.size.height/ self.scrollView.contentSize.height;
 		CGFloat minScale = MIN(scaleWidth, scaleHeight);
-		NSLog(@"scaleWidth = %f,scaleHeight =  %f", scaleWidth, scaleHeight);
 		
 		self.scrollView.minimumZoomScale = minScale;
 		self.scrollView.maximumZoomScale = 1.0f;

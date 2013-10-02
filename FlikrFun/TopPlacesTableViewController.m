@@ -23,6 +23,7 @@
 @implementation TopPlacesTableViewController
 @synthesize topPlaces = _topPlaces;
 
+#pragma mark - setters and getters
 -(void)setTopPlaces:(NSArray *)topPlaces{
 	if (![_topPlaces isEqualToArray:topPlaces]){
 		_topPlaces = topPlaces;
@@ -41,6 +42,7 @@
 	}
 }
 
+#pragma mark - segue
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
 	if ([segue.identifier isEqualToString:@"Place Photoes Sague"]) {
 		NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
@@ -48,6 +50,10 @@
 		NSLog(@"selectedPlaceInfo = %@", selectedPlaceInfo);
 		PlacePhotoesTableViewController *placePhotoesTVC = segue.destinationViewController;
 		placePhotoesTVC.placeInfo = selectedPlaceInfo;
+		
+		//change the backButton's title
+		UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:[selectedPlaceInfo valueForKey:FLICKR_WOE_NAME] style:UIBarButtonItemStylePlain target:nil action:nil];
+		self.navigationItem.backBarButtonItem = backButton;
 	}
 	
 	if([segue.identifier isEqualToString:@"Map Kit View Segue"]){
@@ -99,7 +105,7 @@
 		topPlacesData = [FlickrFetcher topPlaces];
 	}InQueue:nil withComplitionHandler:^{
 		self.topPlaces = topPlacesData;
-		//			NSLog(@"topPlaces = %@", [self.topPlaces description]);
+//		NSLog(@"topPlaces = %@", [self.topPlaces description]);
 		self.navigationItem.rightBarButtonItem = sender;
 	}];
 }

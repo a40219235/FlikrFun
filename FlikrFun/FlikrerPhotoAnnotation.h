@@ -17,3 +17,4 @@
 @property (nonatomic, strong) NSDictionary *photoes;
 
 @end
+ 

@@ -78,7 +78,6 @@
 	
 	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"refresh" style:UIBarButtonItemStyleBordered target:self action:@selector(refreshPressed:)];
 	[self refreshPressed:self.navigationItem.rightBarButtonItem];
-	
 }
 
 -(void)viewDidAppear:(BOOL)animated{

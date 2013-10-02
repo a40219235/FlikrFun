@@ -11,11 +11,14 @@
 #define FLICKR_PHOTO_DESCRIPTION @"description._content"
 #define FLICKR_PLACE_NAME @"_content"
 #define FLICKR_PHOTO_ID @"id"
-#define FLICKR_PHOTO_OWNER @"ownername"
 #define FLICKR_LATITUDE @"latitude"
 #define FLICKR_LONGITUDE @"longitude"
+#define FLICKR_PHOTO_OWNER @"ownername"
+#define FLICKR_PHOTO_PLACE_NAME @"derived_place"
+#define FLICKR_TAGS @"tags"
 #define FLICKR_WOE_NAME @"woe_name"
 #define FLICKR_RECENT_VIEW_PHOTO_KEY @"recent_view_photo_key"
+#define FLICKR_PLACE_ID @"place_id"
 
 typedef enum {
 	FlickrPhotoFormatSquare = 1,
@@ -24,9 +27,10 @@ typedef enum {
 } FlickrPhotoFormat;
 
 @interface FlickrFetcher : NSObject
-
+ 
 + (NSArray *)topPlaces;
 + (NSArray *)photosInPlace:(NSDictionary *)place maxResults:(int)maxResults;
 + (NSURL *)urlForPhoto:(NSDictionary *)photo format:(FlickrPhotoFormat)format;
++ (NSArray *)recentGeoreferencedPhotos;
 
 @end
