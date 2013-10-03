@@ -49,8 +49,8 @@
 }
 
 -(void)loadDataFromFile{
-	[UIManagedDocument openDefaultManagedDocumentWithCompletionHandler:^(BOOL sucess) {
-		if (sucess) {
+	[UIManagedDocument openDefaultManagedDocumentWithCompletionHandler:^(BOOL success) {
+		if (success) {
 			[self setupFetchedResultsController];
 			[self fetchFlickkrDataIntoDocument];
 		}

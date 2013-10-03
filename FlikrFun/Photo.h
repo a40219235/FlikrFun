@@ -16,7 +16,7 @@
 @property (nonatomic, retain) NSString * imageURL;
 @property (nonatomic, retain) NSString * subtitle;
 @property (nonatomic, retain) NSString * title;
-@property (nonatomic, retain) NSString * uniqueID;
+@property (nonatomic, retain) NSDate * dateViewing;
 @property (nonatomic, retain) Place *where;
 
 @end

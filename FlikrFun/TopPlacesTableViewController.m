@@ -13,6 +13,8 @@
 #import "FlikrerPhotoAnnotation.h"
 #import "PhotoViewController.h"
 #import "TableViewUtility.h"
+#import "UIManagedDocument+Manager.h"
+#import "TopPlace+create.h"
 
 @interface TopPlacesTableViewController () <MapKitViewControllerDelegate>
 
@@ -27,15 +29,8 @@
 -(void)setTopPlaces:(NSArray *)topPlaces{
 	if (![_topPlaces isEqualToArray:topPlaces]){
 		_topPlaces = topPlaces;
-		// as long as self is on the stack, reload it
-		if (self) {
-//			NSLog(@"topViewController = %@", [[self.navigationController topViewController] class]);
-			[self.tableView reloadData];
-		}
-		
 		//if present scene is map kit view controller, update annotations
 		if ([[[self.navigationController topViewController] class] isEqual:[MapKitViewController class]]) {
-//			NSLog(@"topViewController = %@", [[self.navigationController topViewController] class]);
 			MapKitViewController *mapKitController = (MapKitViewController *)[self.navigationController topViewController];
 			mapKitController.annotations = [self mapAnnotations];
 		}
@@ -46,8 +41,9 @@
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
 	if ([segue.identifier isEqualToString:@"Place Photoes Sague"]) {
 		NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-		NSDictionary *selectedPlaceInfo = [self.topPlaces objectAtIndex:indexPath.row];
-		NSLog(@"selectedPlaceInfo = %@", selectedPlaceInfo);
+		TopPlace *topPlace = [self.fetchedResultsController objectAtIndexPath:indexPath];
+		//I create a dictionary like this cause I don't wanna change the other PlacePhotoesTableViewController
+		NSDictionary *selectedPlaceInfo = @{@"place_id": topPlace.uniquePlaceID, @"_content": topPlace.placeName, FLICKR_LONGITUDE: topPlace.longtitude, FLICKR_LATITUDE: topPlace.latitude};
 		PlacePhotoesTableViewController *placePhotoesTVC = segue.destinationViewController;
 		placePhotoesTVC.placeInfo = selectedPlaceInfo;
 		
@@ -100,21 +96,59 @@
 	[spinner startAnimating];
 	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:spinner];
 	
-	__block NSArray * topPlacesData;
-	[TableViewUtility loadDataUsingBlock:^{
-		topPlacesData = [FlickrFetcher topPlaces];
-	}InQueue:nil withComplitionHandler:^{
-		self.topPlaces = topPlacesData;
-//		NSLog(@"topPlaces = %@", [self.topPlaces description]);
+	
+	[self loadDataFromFileWithCompletionHandler:^{
 		self.navigationItem.rightBarButtonItem = sender;
 	}];
 }
 
-#pragma mark - Table view data source
+#pragma mark - LoadData
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return [self.topPlaces count];
+-(void)loadDataFromFileWithCompletionHandler:(void(^)(void))completionCallBack{
+	[UIManagedDocument openDefaultManagedDocumentWithCompletionHandler:^(BOOL success) {
+		if (success) {
+			[self setupFetchedResultsController];
+			[self fetchFlickrDataIntoDocumentWithCompletionHandler:completionCallBack];
+		}
+	}];
+}
+
+-(void)setupFetchedResultsController{
+	NSManagedObjectContext *defaultContext = [UIManagedDocument defaultManagedDocument].managedObjectContext;
+	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"TopPlace"];
+	request.sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"country.countryName" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)]];	
+	
+	self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:defaultContext sectionNameKeyPath:@"country.countryName" cacheName:nil];
+}
+
+
+-(void)fetchFlickrDataIntoDocumentWithCompletionHandler:(void(^)(void))completionCallBack{
+	__block NSArray *topPlacesData;
+	[TableViewUtility loadDataUsingBlock:^{
+		topPlacesData = [FlickrFetcher topPlaces];
+		NSLog(@"topPlacesData = %@", topPlacesData);
+	} InQueue:nil withComplitionHandler:^{
+		self.topPlaces = topPlacesData;
+		for (NSDictionary *flickrInfo in topPlacesData){
+			[TopPlace createTopPlaceWithFlickrInfo:flickrInfo inManagedObjectContext:nil];
+		}
+		
+		[[UIManagedDocument defaultManagedDocument] saveToURL:[UIManagedDocument defaultManagedDocument].fileURL forSaveOperation:UIDocumentSaveForOverwriting completionHandler:^(BOOL success) {
+			NSAssert(success, @"save fails");
+			if (success && completionCallBack) {
+				completionCallBack();
+			}
+		}];
+	}];
+}
+
+#pragma mark - Table view data source
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+	return [[self.fetchedResultsController sections] count];
+}
+
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+	return [[[self.fetchedResultsController sections] objectAtIndex:section] numberOfObjects];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -122,9 +156,12 @@
     static NSString *CellIdentifier = @"Top Places Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
 	
-	NSDictionary *placeDetails= [self.topPlaces objectAtIndex:indexPath.row];
-	cell.textLabel.text = [placeDetails valueForKey:FLICKR_WOE_NAME];
-	cell.detailTextLabel.text = [placeDetails valueForKey:FLICKR_PLACE_NAME];
+	if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+    }
+	
+	TopPlace *topPlace = [self.fetchedResultsController objectAtIndexPath:indexPath];
+	cell.textLabel.text = topPlace.woeName;
     
     return cell;
 }
@@ -153,6 +190,8 @@
 		UIStoryboard *sb = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
 		PhotoViewController *photoViewController = [sb instantiateViewControllerWithIdentifier:@"Photo View Controller"];
 		photoViewController.photoURL = url;
+		photoViewController.imageTitle = anotation.title;
+		photoViewController.imageSubtitle = anotation.subtitle;
 		[self.navigationController pushViewController:photoViewController animated:YES];
 		return;
 	}

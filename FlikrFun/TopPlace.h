@@ -16,6 +16,8 @@
 @property (nonatomic, retain) NSString * placeName;
 @property (nonatomic, retain) NSString * uniquePlaceID;
 @property (nonatomic, retain) NSString * woeName;
+@property (nonatomic, retain) NSNumber * longtitude;
+@property (nonatomic, retain) NSNumber * latitude;
 @property (nonatomic, retain) Country *country;
 
 @end

@@ -9,6 +9,8 @@
 #import "RecentViewPhotoesTableViewController.h"
 #import "PhotoViewController.h"
 #import "FlickrFetcher.h"
+#import "UIManagedDocument+Manager.h"
+#import "Photo+Create.h"
 
 @interface RecentViewPhotoesTableViewController ()
 
@@ -20,12 +22,10 @@
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
 	NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-	NSDictionary *selectedPhotoInfo = [self.recentViewedPhotoes objectAtIndex:indexPath.row];
 	PhotoViewController	*photoViewController = segue.destinationViewController;
-	photoViewController.photoURL = [FlickrFetcher urlForPhoto:selectedPhotoInfo format:FlickrPhotoFormatLarge];
-
+	Photo *photo = [self.fetchedResultsController objectAtIndexPath:indexPath];
+	photoViewController.photoURL = [NSURL URLWithString:photo.imageURL];
 }
-
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -39,10 +39,27 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+	[self loadDataFromFile];
 }
 
+-(void)loadDataFromFile{
+	[UIManagedDocument openDefaultManagedDocumentWithCompletionHandler:^(BOOL success) {
+		if (success) {
+			[self setupFetchedResultsController];
+		}
+	}];
+}
+
+-(void)setupFetchedResultsController{
+	NSManagedObjectContext *defaultContext = [UIManagedDocument defaultManagedDocument].managedObjectContext;
+	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Photo"];
+	request.sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"dateViewing" ascending:NO]];
+	
+	self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:defaultContext sectionNameKeyPath:nil cacheName:nil];
+}
+
+
 -(void)viewWillAppear:(BOOL)animated{
-	self.recentViewedPhotoes = [[NSUserDefaults standardUserDefaults] objectForKey:FLICKR_RECENT_VIEW_PHOTO_KEY];
 	[self.tableView reloadData];
 }
 
@@ -53,44 +70,20 @@
 
 #pragma mark - Table view data source
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return [self.recentViewedPhotoes count];
-}
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Recent View Photoes Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-    
-	NSLog(@"recentViewedPhotoes = %@", [self.recentViewedPhotoes description]);
-	NSDictionary *recentViewedPhotoData = self.recentViewedPhotoes[indexPath.row];
 	
-	NSString *photoTitle = [recentViewedPhotoData valueForKey:FLICKR_PHOTO_TITLE];
-	NSString *photoDescription = [recentViewedPhotoData valueForKeyPath:FLICKR_PHOTO_DESCRIPTION];
-	if ([photoTitle length] >0) {
-		cell.textLabel.text = photoTitle;
-		cell.detailTextLabel.text = photoDescription;
-	}else if([photoDescription length] >0){
-		cell.textLabel.text = photoDescription;
-	}else{
-		cell.textLabel.text = @"Unknown";
-	}
+	if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+    }
+	Photo *photo = [self.fetchedResultsController objectAtIndexPath:indexPath];
+	
+	cell.textLabel.text = photo.title;
+	cell.detailTextLabel.text = photo.subtitle;
 	
     return cell;
-}
-
-#pragma mark - Table view delegate
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
 }
 
 @end

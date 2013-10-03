@@ -14,6 +14,18 @@
 @implementation Photo (Create)
 
 +(Photo *)createPhotoWithFlickrInfo:(NSDictionary *)flickrInfo inManagedObjectContext:(NSManagedObjectContext *)context{
+	if (!context) {
+		context = [UIManagedDocument defaultManagedDocument].managedObjectContext;
+	}
+	
+	NSString *title = [flickrInfo objectForKey:FLICKR_PHOTO_TITLE];
+	NSString *subtitle = [flickrInfo valueForKeyPath:FLICKR_PHOTO_DESCRIPTION];
+	NSURL *url = [FlickrFetcher urlForPhoto:flickrInfo format:FlickrPhotoFormatLarge];
+
+	return [self createPhotoWithImageURL:url title:title subtitle:subtitle inManagedObjectContext:context];
+}
+
++(Photo *)createPhotoWithImageURL:(NSURL *)url title:(NSString *)title subtitle:(NSString *)subtitle inManagedObjectContext:(NSManagedObjectContext *)context{
 	Photo *photo;
 	
 	if (!context) {
@@ -22,7 +34,7 @@
 	
 	//fetch request to check if existence before adding to the context
 	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Photo"];
-	request.predicate = [NSPredicate predicateWithFormat:@"uniqueID = %@", [flickrInfo objectForKey:FLICKR_PHOTO_ID]];
+	request.predicate = [NSPredicate predicateWithFormat:@"imageURL = %@", [url absoluteString]];
 	NSSortDescriptor *sortDiscriptor = [NSSortDescriptor sortDescriptorWithKey:@"title" ascending:YES];
 	request.sortDescriptors = [NSArray arrayWithObject:sortDiscriptor];
 	
@@ -34,14 +46,15 @@
 		NSAssert([matches count] > 1, @"matches count = %d", [matches count]);
 	}else if ([matches count] == 0){
 		photo = [NSEntityDescription insertNewObjectForEntityForName:@"Photo" inManagedObjectContext:context];
-		photo.uniqueID = [flickrInfo objectForKey:FLICKR_PHOTO_ID];
-		photo.title = [flickrInfo objectForKey:FLICKR_PHOTO_TITLE];
-		photo.subtitle = [flickrInfo valueForKeyPath:FLICKR_PHOTO_DESCRIPTION];
-		photo.imageURL = [[FlickrFetcher urlForPhoto:flickrInfo format:FlickrPhotoFormatLarge] absoluteString];
+		photo.title = title;
+		photo.subtitle = subtitle;
+		photo.imageURL = [url absoluteString];
 	}else{
 		photo = [matches lastObject];
 	}
+	photo.dateViewing = [NSDate date];
 	return photo;
+	
 }
 
 @end

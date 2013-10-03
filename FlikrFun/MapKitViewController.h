@@ -23,6 +23,9 @@
 @interface MapKitViewController : UIViewController
 
 @property (nonatomic, strong) NSArray *annotations;
+@property (nonatomic) CLLocationCoordinate2D center;
+@property (nonatomic) MKCoordinateSpan span;
+@property (nonatomic) BOOL shouldZoomAfterLoading;
 
 @property (nonatomic, weak) id <MapKitViewControllerDelegate> delegate;
 

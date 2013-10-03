@@ -12,6 +12,6 @@
 
 +(UIManagedDocument *)defaultManagedDocument;
 
-+(void)openDefaultManagedDocumentWithCompletionHandler:(void(^)(BOOL sucess))completionHandler;
++(void)openDefaultManagedDocumentWithCompletionHandler:(void(^)(BOOL success))completionHandler;
 
 @end

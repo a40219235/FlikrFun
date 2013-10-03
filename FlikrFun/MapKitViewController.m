@@ -45,6 +45,10 @@
     [super viewDidLoad];
 
 	self.mapView.delegate = self;
+	if (self.shouldZoomAfterLoading) {
+		MKCoordinateRegion regionToDisplay = MKCoordinateRegionMake(self.center, self.span);
+		[self.mapView setRegion:regionToDisplay animated:NO];
+	}
 }
 
 - (void)didReceiveMemoryWarning

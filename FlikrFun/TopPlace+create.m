@@ -37,6 +37,8 @@
 		topPlace.uniquePlaceID = [flickrInfo objectForKey:FLICKR_PLACE_ID];
 		topPlace.placeName = [flickrInfo objectForKey:FLICKR_PLACE_NAME];
 		topPlace.woeName = [flickrInfo valueForKeyPath:FLICKR_WOE_NAME];
+		topPlace.longtitude = [NSNumber numberWithDouble:[[flickrInfo objectForKey:FLICKR_LONGITUDE] doubleValue]];
+		topPlace.latitude = [NSNumber numberWithDouble:[[flickrInfo objectForKey:FLICKR_LATITUDE] doubleValue]];
 		topPlace.country = [Country countryWithCountryName:[FlickrFetcher getCountryName:flickrInfo] inManagedObjectContext:context];
 	}else{
 		topPlace = [matches lastObject];

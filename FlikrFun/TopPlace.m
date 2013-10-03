@@ -15,6 +15,8 @@
 @dynamic placeName;
 @dynamic uniquePlaceID;
 @dynamic woeName;
+@dynamic longtitude;
+@dynamic latitude;
 @dynamic country;
 
 @end

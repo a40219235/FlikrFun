@@ -15,7 +15,7 @@
 @dynamic imageURL;
 @dynamic subtitle;
 @dynamic title;
-@dynamic uniqueID;
+@dynamic dateViewing;
 @dynamic where;
 
 @end

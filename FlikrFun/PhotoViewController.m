@@ -8,6 +8,10 @@
 
 #import "PhotoViewController.h"
 #import "TableViewUtility.h"
+#import "Photo+Create.h"
+#import "UIManagedDocument+Manager.h"
+#import <CoreData/CoreData.h>
+#import "TableViewUtility.h"
 
 @interface PhotoViewController ()<UIScrollViewDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
@@ -38,6 +42,16 @@
 	
 	__block NSData *imageData;
 	PhotoViewController __weak *weakSelf = self;
+	
+	[UIManagedDocument openDefaultManagedDocumentWithCompletionHandler:^(BOOL success) {
+		if (success) {
+			[Photo createPhotoWithImageURL:self.photoURL title:self.imageTitle subtitle:self.imageSubtitle inManagedObjectContext:nil];
+			[[UIManagedDocument defaultManagedDocument] saveToURL:[UIManagedDocument defaultManagedDocument].fileURL forSaveOperation:UIDocumentSaveForOverwriting completionHandler:^(BOOL success) {
+				NSAssert(success, @"save fails");
+			}];
+		}
+	}];
+	
 	
 	[TableViewUtility loadDataUsingBlock:^{
 		imageData = [NSData dataWithContentsOfURL:self.photoURL];

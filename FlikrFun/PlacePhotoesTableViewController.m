@@ -51,13 +51,27 @@
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
 	if ([segue.identifier isEqualToString:@"Photo View Segue"]) {
 		NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
+		UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
 		NSDictionary *selectedPhotoInfo = [self.photoesOfPlace objectAtIndex:indexPath.row];
 		PhotoViewController	*photoViewController = segue.destinationViewController;
 		photoViewController.photoURL = [FlickrFetcher urlForPhoto:selectedPhotoInfo format:FlickrPhotoFormatLarge];
+		NSLog(@"cell.textLabel.text = %@", cell.textLabel.text);
+		photoViewController.imageTitle = cell.textLabel.text;
+		photoViewController.imageSubtitle = cell.detailTextLabel.text;
+		
 	}
 	
 	if ([segue.identifier isEqualToString:@"Map Kit View Segue"]) {
 		MapKitViewController *mapKitViewController = segue.destinationViewController;
+		
+		//zoom the map to location
+		MKCoordinateSpan span = MKCoordinateSpanMake(10, 10);
+		CLLocationCoordinate2D center = CLLocationCoordinate2DMake([[self.placeInfo objectForKey:FLICKR_LATITUDE] doubleValue], [[self.placeInfo objectForKey:FLICKR_LONGITUDE] doubleValue]);
+
+		mapKitViewController.shouldZoomAfterLoading = YES;
+		mapKitViewController.center = center;
+		mapKitViewController.span = span;
+		
 		mapKitViewController.annotations = [self mapAnnotations];
 		mapKitViewController.delegate = self;
 	}
@@ -131,58 +145,7 @@
     return cell;
 }
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-#pragma mark - Table view delegate
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-	NSDictionary *selectedPhoto = [self.photoesOfPlace objectAtIndex:indexPath.row];
-	NSMutableArray *recentViewPhotoes = [[[NSUserDefaults standardUserDefaults] objectForKey:FLICKR_RECENT_VIEW_PHOTO_KEY] mutableCopy];
-	if (!recentViewPhotoes) {
-		recentViewPhotoes = [NSMutableArray array];
-	}
-	[recentViewPhotoes addObject:selectedPhoto];
-	[[NSUserDefaults standardUserDefaults] setObject:recentViewPhotoes forKey:FLICKR_RECENT_VIEW_PHOTO_KEY];
-	[[NSUserDefaults standardUserDefaults] synchronize];
-}
+//#pragma mark - Table view delegate
 
 #pragma mark - MapKitViewControllerDelegate
 -(UIImage *)MapKitViewController:(MapKitViewController *)sender imageForAnnotation:(id<MKAnnotation>)annotation{
@@ -201,6 +164,8 @@
 	UIStoryboard *sb = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
 	PhotoViewController *photoViewController = [sb instantiateViewControllerWithIdentifier:@"Photo View Controller"];
 	photoViewController.photoURL = url;
+	photoViewController.imageTitle = anotation.title;
+	photoViewController.imageSubtitle = anotation.subtitle;
 	[self.navigationController pushViewController:photoViewController animated:YES];
 }
 
