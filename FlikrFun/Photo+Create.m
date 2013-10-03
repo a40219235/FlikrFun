@@ -8,7 +8,6 @@
 
 #import "Photo+Create.h"
 #import "FlickrFetcher.h"
-#import "Place.h"
 #import "UIManagedDocument+Manager.h"
 
 @implementation Photo (Create)

@@ -175,6 +175,9 @@
 
 #pragma mark - MapKitViewControllerDelegate
 -(UIImage *)MapKitViewController:(MapKitViewController *)sender imageForAnnotation:(id<MKAnnotation>)annotation{
+	if ([annotation class] != [FlikrerPhotoAnnotation class]) {
+		return nil;
+	}
 	FlikrerPhotoAnnotation *fpa = (FlikrerPhotoAnnotation *)annotation;
 	NSURL *url = [FlickrFetcher urlForPhoto:fpa.photoes format:FlickrPhotoFormatSquare];
 	NSData *data = [NSData dataWithContentsOfURL:url];
@@ -184,6 +187,9 @@
 
 -(void)MapKitViewController:(MapKitViewController *)sender annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control{
 	//if there is photo, navigate to show the photo instead, else zoom to show the current place
+	if ([view.annotation class] != [FlikrerPhotoAnnotation class]) {
+		return;
+	}
 	FlikrerPhotoAnnotation * anotation = (FlikrerPhotoAnnotation *)view.annotation;
 	NSURL *url = [FlickrFetcher urlForPhoto:anotation.photoes format:FlickrPhotoFormatLarge];
 	if (url) {

@@ -1,20 +1,19 @@
 //
-//  Place.m
+//  Photo.m
 //  FlikrFun
 //
 //  Created by Shane Fu on 10/2/13.
 //  Copyright (c) 2013 Shane Fu. All rights reserved.
 //
 
-#import "Place.h"
 #import "Photo.h"
 
 
-@implementation Place
+@implementation Photo
 
-@dynamic country;
-@dynamic state;
-@dynamic whoTook;
-@dynamic photoes;
+@dynamic imageURL;
+@dynamic subtitle;
+@dynamic title;
+@dynamic dateViewing;
 
 @end

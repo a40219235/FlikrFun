@@ -26,10 +26,9 @@
 		2A623F2517F54EA200745F13 /* photo1.png in Resources */ = {isa = PBXBuildFile; fileRef = 2A623F2417F54EA200745F13 /* photo1.png */; };
 		2A6B2A1117FBD89200D7E6C2 /* TopPlace+create.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A6B2A1017FBD89200D7E6C2 /* TopPlace+create.m */; };
 		2A78AE0517FC069200F03166 /* Country+create.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A78AE0417FC069200F03166 /* Country+create.m */; };
-		2A78AE3817FCE54000F03166 /* Country.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A78AE3717FCE54000F03166 /* Country.m */; };
-		2A78AE3B17FCE54100F03166 /* Place.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A78AE3A17FCE54000F03166 /* Place.m */; };
-		2A78AE3E17FCE54100F03166 /* Photo.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A78AE3D17FCE54100F03166 /* Photo.m */; };
-		2A78AE4117FCE54200F03166 /* TopPlace.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A78AE4017FCE54100F03166 /* TopPlace.m */; };
+		2A78AE6817FCF7B800F03166 /* TopPlace.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A78AE6717FCF7B800F03166 /* TopPlace.m */; };
+		2A78AE6B17FCF7B900F03166 /* Country.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A78AE6A17FCF7B900F03166 /* Country.m */; };
+		2A78AE6E17FCF7B900F03166 /* Photo.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A78AE6D17FCF7B900F03166 /* Photo.m */; };
 		2A7EBC8817F41C3F00EEAD4C /* TopPlacesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A7EBC8717F41C3F00EEAD4C /* TopPlacesTableViewController.m */; };
 		2A7EBC8B17F4289E00EEAD4C /* RecentViewPhotoesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A7EBC8A17F4289E00EEAD4C /* RecentViewPhotoesTableViewController.m */; };
 		2A98358917F7F1060027B02D /* FlikrerPhotoAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A98358817F7F1060027B02D /* FlikrerPhotoAnnotation.m */; };
@@ -40,7 +39,6 @@
 		2AB8886F17FA79B000F54265 /* VisitedPlacesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2AB8886E17FA79B000F54265 /* VisitedPlacesTableViewController.m */; };
 		2AB8887517FAF06C00F54265 /* UIManagedDocument+Manager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2AB8887417FAF06C00F54265 /* UIManagedDocument+Manager.m */; };
 		2AB8887B17FAF2BC00F54265 /* Photo+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = 2AB8887A17FAF2BC00F54265 /* Photo+Create.m */; };
-		2AB8887E17FAF76400F54265 /* Place+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = 2AB8887D17FAF76400F54265 /* Place+Create.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -73,14 +71,12 @@
 		2A6B2A1017FBD89200D7E6C2 /* TopPlace+create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "TopPlace+create.m"; sourceTree = "<group>"; };
 		2A78AE0317FC069200F03166 /* Country+create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Country+create.h"; sourceTree = "<group>"; };
 		2A78AE0417FC069200F03166 /* Country+create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Country+create.m"; sourceTree = "<group>"; };
-		2A78AE3617FCE54000F03166 /* Country.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Country.h; sourceTree = "<group>"; };
-		2A78AE3717FCE54000F03166 /* Country.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Country.m; sourceTree = "<group>"; };
-		2A78AE3917FCE54000F03166 /* Place.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Place.h; sourceTree = "<group>"; };
-		2A78AE3A17FCE54000F03166 /* Place.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Place.m; sourceTree = "<group>"; };
-		2A78AE3C17FCE54100F03166 /* Photo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Photo.h; sourceTree = "<group>"; };
-		2A78AE3D17FCE54100F03166 /* Photo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Photo.m; sourceTree = "<group>"; };
-		2A78AE3F17FCE54100F03166 /* TopPlace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TopPlace.h; sourceTree = "<group>"; };
-		2A78AE4017FCE54100F03166 /* TopPlace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TopPlace.m; sourceTree = "<group>"; };
+		2A78AE6617FCF7B800F03166 /* TopPlace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TopPlace.h; path = ../TopPlace.h; sourceTree = "<group>"; };
+		2A78AE6717FCF7B800F03166 /* TopPlace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TopPlace.m; path = ../TopPlace.m; sourceTree = "<group>"; };
+		2A78AE6917FCF7B900F03166 /* Country.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Country.h; path = ../Country.h; sourceTree = "<group>"; };
+		2A78AE6A17FCF7B900F03166 /* Country.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Country.m; path = ../Country.m; sourceTree = "<group>"; };
+		2A78AE6C17FCF7B900F03166 /* Photo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Photo.h; path = ../Photo.h; sourceTree = "<group>"; };
+		2A78AE6D17FCF7B900F03166 /* Photo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Photo.m; path = ../Photo.m; sourceTree = "<group>"; };
 		2A7EBC8617F41C3F00EEAD4C /* TopPlacesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TopPlacesTableViewController.h; sourceTree = "<group>"; };
 		2A7EBC8717F41C3F00EEAD4C /* TopPlacesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TopPlacesTableViewController.m; sourceTree = "<group>"; };
 		2A7EBC8917F4289D00EEAD4C /* RecentViewPhotoesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecentViewPhotoesTableViewController.h; sourceTree = "<group>"; };
@@ -100,8 +96,6 @@
 		2AB8887417FAF06C00F54265 /* UIManagedDocument+Manager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIManagedDocument+Manager.m"; sourceTree = "<group>"; };
 		2AB8887917FAF2BC00F54265 /* Photo+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Photo+Create.h"; sourceTree = "<group>"; };
 		2AB8887A17FAF2BC00F54265 /* Photo+Create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Photo+Create.m"; sourceTree = "<group>"; };
-		2AB8887C17FAF76300F54265 /* Place+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Place+Create.h"; sourceTree = "<group>"; };
-		2AB8887D17FAF76400F54265 /* Place+Create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Place+Create.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -200,22 +194,18 @@
 			isa = PBXGroup;
 			children = (
 				2AB8884B17FA440800F54265 /* FlikrFun.xcdatamodeld */,
-				2A78AE3F17FCE54100F03166 /* TopPlace.h */,
-				2A78AE4017FCE54100F03166 /* TopPlace.m */,
-				2A78AE3C17FCE54100F03166 /* Photo.h */,
-				2A78AE3D17FCE54100F03166 /* Photo.m */,
-				2A78AE3917FCE54000F03166 /* Place.h */,
-				2A78AE3A17FCE54000F03166 /* Place.m */,
-				2A78AE3617FCE54000F03166 /* Country.h */,
-				2A78AE3717FCE54000F03166 /* Country.m */,
+				2A78AE6C17FCF7B900F03166 /* Photo.h */,
+				2A78AE6D17FCF7B900F03166 /* Photo.m */,
+				2A78AE6917FCF7B900F03166 /* Country.h */,
+				2A78AE6A17FCF7B900F03166 /* Country.m */,
+				2A78AE6617FCF7B800F03166 /* TopPlace.h */,
+				2A78AE6717FCF7B800F03166 /* TopPlace.m */,
 				2A78AE0317FC069200F03166 /* Country+create.h */,
 				2A78AE0417FC069200F03166 /* Country+create.m */,
 				2A6B2A0F17FBD89200D7E6C2 /* TopPlace+create.h */,
 				2A6B2A1017FBD89200D7E6C2 /* TopPlace+create.m */,
 				2AB8887917FAF2BC00F54265 /* Photo+Create.h */,
 				2AB8887A17FAF2BC00F54265 /* Photo+Create.m */,
-				2AB8887C17FAF76300F54265 /* Place+Create.h */,
-				2AB8887D17FAF76400F54265 /* Place+Create.m */,
 				2AB8887317FAF06C00F54265 /* UIManagedDocument+Manager.h */,
 				2AB8887417FAF06C00F54265 /* UIManagedDocument+Manager.m */,
 			);
@@ -324,13 +314,11 @@
 				2AB8886F17FA79B000F54265 /* VisitedPlacesTableViewController.m in Sources */,
 				2AB8887517FAF06C00F54265 /* UIManagedDocument+Manager.m in Sources */,
 				2AB8887B17FAF2BC00F54265 /* Photo+Create.m in Sources */,
-				2AB8887E17FAF76400F54265 /* Place+Create.m in Sources */,
 				2A6B2A1117FBD89200D7E6C2 /* TopPlace+create.m in Sources */,
 				2A78AE0517FC069200F03166 /* Country+create.m in Sources */,
-				2A78AE3817FCE54000F03166 /* Country.m in Sources */,
-				2A78AE3B17FCE54100F03166 /* Place.m in Sources */,
-				2A78AE3E17FCE54100F03166 /* Photo.m in Sources */,
-				2A78AE4117FCE54200F03166 /* TopPlace.m in Sources */,
+				2A78AE6817FCF7B800F03166 /* TopPlace.m in Sources */,
+				2A78AE6B17FCF7B900F03166 /* Country.m in Sources */,
+				2A78AE6E17FCF7B900F03166 /* Photo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
